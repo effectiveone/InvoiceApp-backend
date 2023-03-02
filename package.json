@@ -23,6 +23,7 @@
     "mongo-sanitize": "^1.1.0",
     "mongoose": "^7.0.0",
     "nodemon": "^2.0.13",
+    "uuid": "^9.0.0",
     "xss-filters": "^1.2.7"
   }
 }

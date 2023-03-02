@@ -37,16 +37,16 @@ router.patch("/faktury/:id", fakturaControllers.update);
 router.delete("/faktury/:id", fakturaControllers.delete);
 
 // dane firmy routes
-router.post("/dane-firmy", danefirmyControllers.create);
+router.put("/dane-firmy", danefirmyControllers.createOrUpdate);
 router.get("/dane-firmy", danefirmyControllers.read);
 router.patch("/dane-firmy", danefirmyControllers.update);
 router.delete("/dane-firmy", danefirmyControllers.delete);
 
 // kontrahent routes
 router.post("/kontrahenci", kontrahenciControllers.create);
-router.get("/kontrahenci/:id", kontrahenciControllers.read);
-router.patch("/kontrahenci/:id", kontrahenciControllers.update);
-router.delete("/kontrahenci/:id", kontrahenciControllers.delete);
+router.get("/kontrahenci", kontrahenciControllers.read);
+router.patch("/kontrahenci", kontrahenciControllers.update);
+router.delete("/kontrahenci", kontrahenciControllers.delete);
 
 // test route to verify if our middleware is working
 router.get("/test", auth, (req, res) => {

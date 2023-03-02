@@ -6,7 +6,7 @@ app.use(bodyParser.json());
 const sanitize = require("mongo-sanitize");
 const xss = require("xss-filters");
 const daneFirmyController = {
-  create: async (req, res) => {
+  createOrUpdate: async (req, res) => {
     const sanitizedData = {
       nip: xss.inHTMLData(sanitize(req.body.nip)),
       regon: xss.inHTMLData(sanitize(req.body.regon)),
@@ -17,10 +17,25 @@ const daneFirmyController = {
       legalForm: xss.inHTMLData(sanitize(req.body.legalForm)),
       userEmail: xss.inHTMLData(sanitize(req.body.userEmail)),
     };
+    console.log("reg", sanitizedData);
     try {
-      const daneFirmy = new DaneFirmy(sanitizedData);
-      await daneFirmy.save();
-      res.status(201).send(daneFirmy);
+      let daneFirmy;
+      const existingDaneFirmy = await DaneFirmy.findOne({
+        userEmail: sanitizedData.userEmail,
+      });
+      if (existingDaneFirmy) {
+        // Aktualizuj dane firmy
+        daneFirmy = await DaneFirmy.findByIdAndUpdate(
+          existingDaneFirmy._id,
+          sanitizedData,
+          { new: true }
+        );
+      } else {
+        // Utwórz nową firmę
+        daneFirmy = new DaneFirmy(sanitizedData);
+        await daneFirmy.save();
+      }
+      res.status(200).send(daneFirmy);
     } catch (error) {
       res.status(400).send(error.message);
     }
