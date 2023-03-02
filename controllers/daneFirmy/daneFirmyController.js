@@ -45,7 +45,7 @@ const daneFirmyController = {
 
     try {
       const daneFirmy = await DaneFirmy.findOne({
-        userEmail: req.body.userEmail,
+        userEmail: req.query.userEmail,
       });
 
       console.log("Data retrieved from database:", daneFirmy);
