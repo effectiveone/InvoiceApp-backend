@@ -1,4 +1,4 @@
-const Faktura = require("../models/faktura");
+const Faktura = require("../../models/faktura");
 
 const fakturaController = {
   create: async (req, res) => {

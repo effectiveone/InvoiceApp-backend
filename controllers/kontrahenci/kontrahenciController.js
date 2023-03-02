@@ -1,4 +1,4 @@
-const Kontrahent = require("../models/kontrahent");
+const Kontrahent = require("../../models/kontrahenci");
 
 const kontrahentController = {
   create: async (req, res) => {

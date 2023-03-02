@@ -3,14 +3,19 @@ const http = require("http");
 const cors = require("cors");
 const mongoose = require("mongoose");
 require("dotenv").config();
-
+const bodyParser = require("body-parser");
+const app = express();
+const router = express.Router();
 const authRoutes = require("./routes/authRoutes");
-
 const PORT = process.env.PORT || process.env.API_PORT;
 
-const app = express();
+const helmet = require("helmet");
+
 app.use(express.json());
 app.use(cors());
+app.use(helmet());
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 
 // register the routes
 app.use("/api/auth", authRoutes);

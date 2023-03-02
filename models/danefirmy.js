@@ -1,23 +1,40 @@
 const mongoose = require("mongoose");
 
-const daneFirmySchema = new mongoose.Schema({
-  nazwa: {
+const companyDataSchema = new mongoose.Schema({
+  userEmail: {
     type: String,
     required: true,
-  },
-  adres: {
-    type: String,
-    required: true,
+    unique: true,
   },
   nip: {
     type: String,
     required: true,
     unique: true,
   },
-  konto: {
+  regon: {
+    type: String,
+    required: true,
+  },
+  street: {
+    type: String,
+    required: true,
+  },
+  city: {
+    type: String,
+    required: true,
+  },
+  zipCode: {
+    type: String,
+    required: true,
+  },
+  companyName: {
+    type: String,
+    required: true,
+  },
+  legalForm: {
     type: String,
     required: true,
   },
 });
 
-module.exports = mongoose.model("DaneFirmy", daneFirmySchema);
+module.exports = mongoose.model("DaneFirmy", companyDataSchema);

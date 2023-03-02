@@ -1,13 +1,12 @@
 const express = require("express");
 const router = express.Router();
+const danefirmyControllers = require("../controllers/daneFirmy/daneFirmyController");
+const fakturaControllers = require("../controllers/faktura/fakturaController");
+const kontrahenciControllers = require("../controllers/kontrahenci/kontrahenciController");
 const authControllers = require("../controllers/auth/authControllers");
 const Joi = require("joi");
 const validator = require("express-joi-validation").createValidator({});
 const auth = require("../middleware/auth");
-const danefirmyControllers = require("../controllers/danefirmy").controllers;
-const fakturaControllers = require("../controllers/faktura").controllers;
-const kontrahenciControllers =
-  require("../controllers/kontrahenci").controllers;
 
 const registerSchema = Joi.object({
   username: Joi.string().min(3).max(12).required(),
@@ -39,9 +38,9 @@ router.delete("/faktury/:id", fakturaControllers.delete);
 
 // dane firmy routes
 router.post("/dane-firmy", danefirmyControllers.create);
-router.get("/dane-firmy/:id", danefirmyControllers.read);
-router.patch("/dane-firmy/:id", danefirmyControllers.update);
-router.delete("/dane-firmy/:id", danefirmyControllers.delete);
+router.get("/dane-firmy", danefirmyControllers.read);
+router.patch("/dane-firmy", danefirmyControllers.update);
+router.delete("/dane-firmy", danefirmyControllers.delete);
 
 // kontrahent routes
 router.post("/kontrahenci", kontrahenciControllers.create);
