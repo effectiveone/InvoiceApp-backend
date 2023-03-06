@@ -41,14 +41,10 @@ const daneFirmyController = {
     }
   },
   read: async (req, res) => {
-    console.log("GET request received:", req.body);
-
     try {
       const daneFirmy = await DaneFirmy.findOne({
-        userEmail: req.query.userEmail,
+        userEmail: req.body.userEmail,
       });
-
-      console.log("Data retrieved from database:", daneFirmy);
 
       if (!daneFirmy) {
         return res.status(404).send("Dane firmy not found");

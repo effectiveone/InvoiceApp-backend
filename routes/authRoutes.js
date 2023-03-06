@@ -38,13 +38,13 @@ router.delete("/faktury/:id", fakturaControllers.delete);
 
 // dane firmy routes
 router.put("/dane-firmy", danefirmyControllers.createOrUpdate);
-router.get("/dane-firmy", danefirmyControllers.read);
+router.post("/get-dane-firmy", danefirmyControllers.read);
 router.patch("/dane-firmy", danefirmyControllers.update);
 router.delete("/dane-firmy", danefirmyControllers.delete);
 
 // kontrahent routes
 router.post("/kontrahenci", kontrahenciControllers.create);
-router.get("/kontrahenci", kontrahenciControllers.read);
+router.post("/get-kontrahenci", kontrahenciControllers.read);
 router.patch("/kontrahenci", kontrahenciControllers.update);
 router.delete("/kontrahenci", kontrahenciControllers.delete);
 

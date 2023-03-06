@@ -1,40 +1,123 @@
 const mongoose = require("mongoose");
+const { v4: uuidv4 } = require("uuid");
 
-const fakturaSchema = new mongoose.Schema({
-  numerFaktury: {
+const { Schema } = mongoose;
+
+const companySchema = new Schema({
+  id: {
+    type: String,
+    default: uuidv4,
+  },
+
+  nip: {
     type: String,
     required: true,
   },
-  dataWystawienia: {
+  regon: {
+    type: String,
+    required: true,
+  },
+  street: {
+    type: String,
+    required: true,
+  },
+  city: {
+    type: String,
+    required: true,
+  },
+  zipCode: {
+    type: String,
+    required: true,
+  },
+  companyName: {
+    type: String,
+    required: true,
+  },
+  legalForm: {
+    type: String,
+    required: true,
+  },
+  userEmail: {
+    type: String,
+  },
+});
+
+const itemSchema = new Schema({
+  name: {
+    type: String,
+    required: true,
+  },
+  quantity: {
+    type: Number,
+    required: true,
+  },
+  unit: {
+    type: String,
+    required: true,
+  },
+  vat: {
+    type: Number,
+    required: true,
+  },
+  netPrice: {
+    type: Number,
+    required: true,
+  },
+  netValue: {
+    type: Number,
+    required: true,
+  },
+  grossValue: {
+    type: Number,
+    required: true,
+  },
+});
+
+const invoiceSchema = new Schema({
+  companyData: {
+    type: companySchema,
+    required: true,
+  },
+  invoiceNumber: {
+    type: String,
+    required: true,
+    unique: true,
+  },
+  selectedKontrahent: {
+    type: companySchema,
+    required: true,
+  },
+  invoiceSaleDate: {
     type: Date,
     required: true,
   },
-  kontrahent: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "Kontrahent",
+  invoiceDate: {
+    type: Date,
     required: true,
   },
-  daneFirmy: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "DaneFirmy",
+  invoicePaymentDate: {
+    type: Date,
     required: true,
   },
-  pozycje: [
-    {
-      nazwaProduktu: {
-        type: String,
-        required: true,
-      },
-      ilosc: {
-        type: Number,
-        required: true,
-      },
-      cenaJednostkowa: {
-        type: Number,
-        required: true,
-      },
-    },
-  ],
+  items: {
+    type: [itemSchema],
+    required: true,
+  },
+  totalNetValue: {
+    type: Number,
+    required: true,
+  },
+  totalGrossValue: {
+    type: Number,
+    required: true,
+  },
+  userEmail: {
+    type: String,
+    required: true,
+  },
+  notes: {
+    type: String,
+  },
 });
 
-module.exports = mongoose.model("Faktura", fakturaSchema);
+module.exports = mongoose.model("Invoice", invoiceSchema);

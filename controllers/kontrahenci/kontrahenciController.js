@@ -27,11 +27,12 @@ const kontrahentController = {
     }
   },
   read: async (req, res) => {
-    console.log("regbody", req.query);
-
+    console.log("GET Kontrahent request received:", req.body);
+    console.log("GET Kontrahent request received:", req.query);
+    console.log("GET Kontrahent request received:", req.params);
     try {
       const kontrahent = await Kontrahent.find({
-        userEmail: req.query.userEmail,
+        userEmail: req.body.userEmail,
       });
       if (!kontrahent) {
         return res.status(404).send("Kontrahent not found");
