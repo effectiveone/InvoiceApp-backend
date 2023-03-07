@@ -84,46 +84,95 @@ const fakturaController = {
       res.status(400).send(error.message);
     }
   },
-  read: async (req, res) => {
+  readAll: async (req, res) => {
+    console.log("GET Faktura request received:", req.body);
+
     try {
-      const faktura = await Faktura.findOne({
-        invoiceNumber: req.params.invoiceNumber,
+      const faktura = await Faktura.find({
+        userEmail: req.body.userEmail,
       });
       if (!faktura) {
-        return res.status(404).send("Faktura not found");
+        return res.status(404).send("faktura not found");
       }
-      res.send(faktura);
+      res.status(201).send(faktura);
     } catch (error) {
+      console.error(error);
       res.status(400).send(error.message);
     }
   },
   update: async (req, res) => {
-    const allowedUpdates = [
-      "numerFaktury",
-      "dataWystawienia",
-      "kontrahent",
-      "daneFirmy",
-      "pozycje",
-    ];
-    const updates = Object.keys(req.body);
-    const isValidOperation = updates.every((update) =>
-      allowedUpdates.includes(update)
-    );
-
-    if (!isValidOperation) {
-      return res.status(400).send("Invalid updates");
-    }
-
     try {
-      const faktura = await Faktura.findByIdAndUpdate(req.params.id, req.body, {
-        new: true,
-        runValidators: true,
+      const {
+        companyData,
+        selectedKontrahent,
+        items,
+        totalNetValue,
+        totalGrossValue,
+        notes,
+        userEmail,
+        invoiceSaleDate,
+        invoiceDate,
+        invoicePaymentDate,
+        invoiceNumber,
+      } = req.body;
+      console.log("req.body", req.body);
+      const existingFaktura = await Faktura.findOne({
+        userEmail: userEmail,
+        invoiceNumber: invoiceNumber,
       });
-      if (!faktura) {
-        return res.status(404).send("Faktura not found");
-      }
-      res.send(faktura);
+
+      console.log("existingFaktura", existingFaktura);
+
+      existingFaktura.companyData = {
+        nip: xss.inHTMLData(sanitize(companyData.nip)),
+        regon: xss.inHTMLData(sanitize(companyData.regon)),
+        street: xss.inHTMLData(sanitize(companyData.street)),
+        city: xss.inHTMLData(sanitize(companyData.city)),
+        zipCode: xss.inHTMLData(sanitize(companyData.zipCode)),
+        companyName: xss.inHTMLData(sanitize(companyData.companyName)),
+        legalForm: xss.inHTMLData(sanitize(companyData.legalForm)),
+        userEmail: xss.inHTMLData(sanitize(companyData.userEmail)),
+      };
+
+      existingFaktura.selectedKontrahent = {
+        nip: xss.inHTMLData(sanitize(selectedKontrahent.kontrahent_nip)),
+        regon: xss.inHTMLData(sanitize(selectedKontrahent.kontrahent_regon)),
+        street: xss.inHTMLData(sanitize(selectedKontrahent.kontrahent_street)),
+        city: xss.inHTMLData(sanitize(selectedKontrahent.kontrahent_city)),
+        zipCode: xss.inHTMLData(
+          sanitize(selectedKontrahent.kontrahent_zipCode)
+        ),
+        companyName: xss.inHTMLData(
+          sanitize(selectedKontrahent.kontrahent_companyName)
+        ),
+        legalForm: xss.inHTMLData(
+          sanitize(selectedKontrahent.kontrahent_legalForm)
+        ),
+        userEmail: xss.inHTMLData(
+          sanitize(selectedKontrahent.kontrahent_userEmail)
+        ),
+      };
+
+      existingFaktura.invoiceSaleDate = invoiceSaleDate;
+      existingFaktura.invoiceDate = invoiceDate;
+      existingFaktura.invoicePaymentDate = invoicePaymentDate;
+      existingFaktura.items = items.map((item) => ({
+        name: xss.inHTMLData(sanitize(item.name)),
+        quantity: parseFloat(item.quantity),
+        unit: xss.inHTMLData(sanitize(item.unit)),
+        vat: parseFloat(item.vat),
+        netPrice: parseFloat(item.netPrice),
+        netValue: parseFloat(item.netValue),
+        grossValue: parseFloat(item.grossValue),
+      }));
+      existingFaktura.totalNetValue = totalNetValue;
+      existingFaktura.totalGrossValue = totalGrossValue;
+      existingFaktura.userEmail = xss.inHTMLData(sanitize(userEmail));
+      existingFaktura.notes = xss.inHTMLData(sanitize(notes));
+      const updatedFaktura = await existingFaktura.save();
+      res.send(updatedFaktura);
     } catch (error) {
+      console.error(error);
       res.status(400).send(error.message);
     }
   },

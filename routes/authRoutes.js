@@ -32,8 +32,9 @@ router.post(
 
 // Faktura
 router.post("/faktury", fakturaControllers.create);
-router.get("/faktury/:id", fakturaControllers.read);
-router.patch("/faktury/:id", fakturaControllers.update);
+router.post("/get-faktury", fakturaControllers.readAll);
+// router.get("/get-faktury/:id", fakturaControllers.readOne);
+router.post("/edit-faktura", fakturaControllers.update);
 router.delete("/faktury/:id", fakturaControllers.delete);
 
 // dane firmy routes
