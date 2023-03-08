@@ -8,8 +8,6 @@ const xss = require("xss-filters");
 
 const fakturaController = {
   create: async (req, res) => {
-    console.log("body", req.body);
-
     try {
       const {
         companyData,
@@ -24,7 +22,6 @@ const fakturaController = {
         userEmail,
       } = req.body;
       const invoiceNumber = await generateInvoiceNumber(); // assuming you have a function to generate invoice number
-      console.log("invoiceNumber", req.body);
 
       const faktura = new Faktura({
         companyData: {
@@ -76,7 +73,6 @@ const fakturaController = {
         invoiceNumber,
       });
 
-      console.log("faktura", faktura);
       await faktura.save();
       res.status(201).send(faktura);
     } catch (error) {
@@ -85,8 +81,6 @@ const fakturaController = {
     }
   },
   readAll: async (req, res) => {
-    console.log("GET Faktura request received:", req.body);
-
     try {
       const faktura = await Faktura.find({
         userEmail: req.body.userEmail,
@@ -115,13 +109,11 @@ const fakturaController = {
         invoicePaymentDate,
         invoiceNumber,
       } = req.body;
-      console.log("req.body", req.body);
+
       const existingFaktura = await Faktura.findOne({
         userEmail: userEmail,
         invoiceNumber: invoiceNumber,
       });
-
-      console.log("existingFaktura", existingFaktura);
 
       existingFaktura.companyData = {
         nip: xss.inHTMLData(sanitize(companyData.nip)),

@@ -7,6 +7,7 @@ const sanitize = require("mongo-sanitize");
 const xss = require("xss-filters");
 const daneFirmyController = {
   createOrUpdate: async (req, res) => {
+    console.log(req.body);
     const sanitizedData = {
       nip: xss.inHTMLData(sanitize(req.body.nip)),
       regon: xss.inHTMLData(sanitize(req.body.regon)),
@@ -16,8 +17,10 @@ const daneFirmyController = {
       companyName: xss.inHTMLData(sanitize(req.body.companyName)),
       legalForm: xss.inHTMLData(sanitize(req.body.legalForm)),
       userEmail: xss.inHTMLData(sanitize(req.body.userEmail)),
+      bankAccount: xss.inHTMLData(sanitize(req.body.bankAccount)),
+      bankName: xss.inHTMLData(sanitize(req.body.bankName)),
     };
-    console.log("reg", sanitizedData);
+
     try {
       let daneFirmy;
       const existingDaneFirmy = await DaneFirmy.findOne({
@@ -47,7 +50,18 @@ const daneFirmyController = {
       });
 
       if (!daneFirmy) {
-        return res.status(404).send("Dane firmy not found");
+        const defaultDaneFirmy = {
+          nip: "",
+          regon: "",
+          street: "",
+          city: "",
+          zipCode: "",
+          companyName: "",
+          legalForm: "",
+          bankName: "",
+          bankAccount: "",
+        };
+        return res.status(200).send(defaultDaneFirmy);
       }
 
       res.status(200).send(daneFirmy);

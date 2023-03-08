@@ -17,7 +17,6 @@ const kontrahentController = {
       legalForm: xss.inHTMLData(sanitize(req.body.legalForm)),
       userEmail: xss.inHTMLData(sanitize(req.body.userEmail)),
     };
-    console.log("reg", sanitizedData);
     try {
       const kontrahent = new Kontrahent(sanitizedData);
       await kontrahent.save();
@@ -27,9 +26,6 @@ const kontrahentController = {
     }
   },
   read: async (req, res) => {
-    console.log("GET Kontrahent request received:", req.body);
-    console.log("GET Kontrahent request received:", req.query);
-    console.log("GET Kontrahent request received:", req.params);
     try {
       const kontrahent = await Kontrahent.find({
         userEmail: req.body.userEmail,

@@ -31,6 +31,14 @@ const companyDataSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  bankName: {
+    type: String,
+    required: true,
+  },
+  bankAccount: {
+    type: String,
+    required: true,
+  },
   legalForm: {
     type: String,
     required: true,
