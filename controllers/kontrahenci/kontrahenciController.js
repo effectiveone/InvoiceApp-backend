@@ -39,16 +39,22 @@ const kontrahentController = {
     }
   },
   update: async (req, res) => {
-    const allowedUpdates = ["nazwa", "lokalizacja", "nip", "konto"];
+    const allowedUpdates = [
+      "legalForm",
+      "nip",
+      "regon",
+      "street",
+      "city",
+      "zipCode",
+      "companyName",
+    ];
     const updates = Object.keys(req.body);
     const isValidOperation = updates.every((update) =>
       allowedUpdates.includes(update)
     );
-
     if (!isValidOperation) {
       return res.status(400).send("Invalid updates");
     }
-
     try {
       const kontrahent = await Kontrahent.findByIdAndUpdate(
         req.params.id,
@@ -63,6 +69,7 @@ const kontrahentController = {
       res.status(400).send(error.message);
     }
   },
+
   delete: async (req, res) => {
     try {
       const kontrahent = await Kontrahent.findByIdAndDelete(req.params.id);
