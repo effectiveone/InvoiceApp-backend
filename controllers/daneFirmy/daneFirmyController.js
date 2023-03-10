@@ -7,7 +7,7 @@ const sanitize = require("mongo-sanitize");
 const xss = require("xss-filters");
 const daneFirmyController = {
   createOrUpdate: async (req, res) => {
-    console.log(req.body);
+    console.log("email", req.body);
     const sanitizedData = {
       nip: xss.inHTMLData(sanitize(req.body.nip)),
       regon: xss.inHTMLData(sanitize(req.body.regon)),
@@ -40,6 +40,7 @@ const daneFirmyController = {
       }
       res.status(200).send(daneFirmy);
     } catch (error) {
+      console.error(error);
       res.status(400).send(error.message);
     }
   },

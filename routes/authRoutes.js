@@ -47,7 +47,7 @@ router.delete("/dane-firmy", danefirmyControllers.delete);
 router.post("/kontrahenci", kontrahenciControllers.create);
 router.post("/get-kontrahenci", kontrahenciControllers.read);
 router.patch("/kontrahenci/:id", kontrahenciControllers.update);
-router.delete("/kontrahenci", kontrahenciControllers.delete);
+router.delete("/kontrahenci/:id", kontrahenciControllers.delete);
 
 // test route to verify if our middleware is working
 router.get("/test", auth, (req, res) => {
