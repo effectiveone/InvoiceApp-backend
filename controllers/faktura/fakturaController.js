@@ -7,6 +7,34 @@ const sanitize = require("mongo-sanitize");
 const xss = require("xss-filters");
 
 const fakturaController = {
+  checkNumber: async (req, res) => {
+    try {
+      const { userEmail } = req.body;
+      const currentDate = new Date();
+      const year = currentDate.getFullYear().toString().slice(-2);
+      const month = (currentDate.getMonth() + 1).toString().padStart(2, "0");
+
+      const latestInvoice = await Faktura.findOne({
+        userEmail: userEmail,
+        invoiceNumber: { $regex: `^${year}${month}` },
+      })
+        .sort({ invoiceNumber: -1 })
+        .exec();
+
+      if (!latestInvoice) {
+        return `${year}${month}-001`;
+      }
+
+      const latestNumber = parseInt(latestInvoice.invoiceNumber.slice(-3));
+      const nextNumber = (latestNumber + 1).toString().padStart(3, "0");
+
+      const currentInvoiceNumber = `${year}${month}-${nextNumber}`;
+
+      res.send(currentInvoiceNumber);
+    } catch (error) {
+      res.status(400).send(error.message);
+    }
+  },
   create: async (req, res) => {
     try {
       const {
@@ -20,8 +48,8 @@ const fakturaController = {
         totalGrossValue,
         notes,
         userEmail,
+        invoiceNumber,
       } = req.body;
-      const invoiceNumber = await generateInvoiceNumber(); // assuming you have a function to generate invoice number
 
       const faktura = new Faktura({
         companyData: {
@@ -81,6 +109,8 @@ const fakturaController = {
     }
   },
   readAll: async (req, res) => {
+    console.log("czy tu cos sie wydarzylo readAll", req.body);
+
     try {
       const faktura = await Faktura.find({
         userEmail: req.body.userEmail,
@@ -182,24 +212,3 @@ const fakturaController = {
 };
 
 module.exports = fakturaController;
-
-const generateInvoiceNumber = async () => {
-  const currentDate = new Date();
-  const year = currentDate.getFullYear().toString().slice(-2);
-  const month = (currentDate.getMonth() + 1).toString().padStart(2, "0");
-
-  const latestInvoice = await Faktura.findOne({
-    invoiceNumber: { $regex: `^${year}${month}` },
-  })
-    .sort({ invoiceNumber: -1 })
-    .exec();
-
-  if (!latestInvoice) {
-    return `${year}${month}-001`;
-  }
-
-  const latestNumber = parseInt(latestInvoice.invoiceNumber.slice(-3));
-  const nextNumber = (latestNumber + 1).toString().padStart(3, "0");
-
-  return `${year}${month}-${nextNumber}`;
-};

@@ -2,11 +2,40 @@ const express = require("express");
 const router = express.Router();
 const danefirmyControllers = require("../controllers/daneFirmy/daneFirmyController");
 const fakturaControllers = require("../controllers/faktura/fakturaController");
+const statsaControllers = require("../controllers/stats/statsController");
+
 const kontrahenciControllers = require("../controllers/kontrahenci/kontrahenciController");
+const productsControllers = require("../controllers/products/productsController");
 const authControllers = require("../controllers/auth/authControllers");
 const Joi = require("joi");
 const validator = require("express-joi-validation").createValidator({});
 const auth = require("../middleware/auth");
+const Setting = require("../models/settings");
+
+router.put("/settings", async (req, res) => {
+  console.log("zmiana danych", req.body);
+  try {
+    const setting = await Setting.findOneAndUpdate(
+      { email: req.body.email },
+      { $set: req.body },
+      { new: true, upsert: true }
+    );
+    res.json(setting);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+router.post("/settings", async (req, res) => {
+  try {
+    const { email } = req.body;
+    const settings = await Setting.findOne({ email });
+    res.json(settings);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Server error" });
+  }
+});
 
 const registerSchema = Joi.object({
   username: Joi.string().min(3).max(12).required(),
@@ -30,7 +59,17 @@ router.post(
   authControllers.controllers.postLogin
 );
 
+router.post("/stats", statsaControllers.salesStats);
+
+//Products
+router.post("/product", productsControllers.createProduct);
+router.get("/products", productsControllers.getProducts);
+router.post("/product", productsControllers.getProductById);
+router.post("/product/:id", productsControllers.updateProduct);
+router.delete("/product/:id", productsControllers.deleteProduct);
+
 // Faktura
+router.post("/invoiceNumber", fakturaControllers.checkNumber);
 router.post("/faktury", fakturaControllers.create);
 router.post("/get-faktury", fakturaControllers.readAll);
 // router.get("/get-faktury/:id", fakturaControllers.readOne);
