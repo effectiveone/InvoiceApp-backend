@@ -59,16 +59,37 @@ router.post(
   authControllers.controllers.postLogin
 );
 
-router.post("/stats", statsaControllers.salesStats);
+router.post("/stats", statsaControllers.invoiceStats);
+
+/**
+ * @swagger
+ * /products:
+ *   get:
+ *     summary: Get all products
+ *     tags: [Products]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Returns all products
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *       401:
+ *         $ref: '#/components/responses/UnauthorizedError'
+ */
+router.get("/products", auth, productsControllers.getProducts);
 
 //Products
 router.post("/product", productsControllers.createProduct);
-router.get("/products", productsControllers.getProducts);
 router.post("/product", productsControllers.getProductById);
 router.post("/product/:id", productsControllers.updateProduct);
 router.delete("/product/:id", productsControllers.deleteProduct);
 
 // Faktura
+router.post("/invoiceAllNumber", fakturaControllers.checkAllNumber);
+
 router.post("/invoiceNumber", fakturaControllers.checkNumber);
 router.post("/faktury", fakturaControllers.create);
 router.post("/get-faktury", fakturaControllers.readAll);

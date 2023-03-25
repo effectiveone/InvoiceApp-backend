@@ -35,7 +35,100 @@ const fakturaController = {
       res.status(400).send(error.message);
     }
   },
+  checkAllNumber: async (req, res) => {
+    try {
+      const { userEmail } = req.body;
+      const currentDate = new Date();
+      const year = currentDate.getFullYear().toString().slice(-2);
+      const month = (currentDate.getMonth() + 1).toString().padStart(2, "0");
+
+      const latestInvoices = await Faktura.find({
+        userEmail: userEmail,
+        invoiceNumber: { $regex: `^${year}${month}` },
+      })
+        .sort({ invoiceNumber: -1 })
+        .exec();
+
+      let latestNumbers = {
+        korygujaca: 0,
+        sprzedazowa: 0,
+        zakupowa: 0,
+        zaliczkowa: 0,
+        proformaSprzedazowa: 0,
+        proformaZakupowa: 0,
+      };
+
+      latestInvoices.forEach((invoice) => {
+        const prefix = invoice.invoiceNumber.slice(0, 2);
+        const number = parseInt(invoice.invoiceNumber.slice(-3));
+        switch (prefix) {
+          case "K-":
+            latestNumbers.korygujaca = Math.max(
+              latestNumbers.korygujaca,
+              number
+            );
+            break;
+          case "FV":
+            latestNumbers.sprzedazowa = Math.max(
+              latestNumbers.sprzedazowa,
+              number
+            );
+            break;
+          case "FZ":
+            latestNumbers.zakupowa = Math.max(latestNumbers.zakupowa, number);
+            break;
+          case "FZL":
+            latestNumbers.zaliczkowa = Math.max(
+              latestNumbers.zaliczkowa,
+              number
+            );
+            break;
+          case "FPS":
+            latestNumbers.proformaSprzedazowa = Math.max(
+              latestNumbers.proformaSprzedazowa,
+              number
+            );
+            break;
+          case "FPZ":
+            latestNumbers.proformaZakupowa = Math.max(
+              latestNumbers.proformaZakupowa,
+              number
+            );
+            break;
+        }
+      });
+
+      const nextNumbers = {
+        korygujaca: (latestNumbers.korygujaca + 1).toString().padStart(3, "0"),
+        sprzedazowa: (latestNumbers.sprzedazowa + 1)
+          .toString()
+          .padStart(3, "0"),
+        zakupowa: (latestNumbers.zakupowa + 1).toString().padStart(3, "0"),
+        zaliczkowa: (latestNumbers.zaliczkowa + 1).toString().padStart(3, "0"),
+        proformaSprzedazowa: (latestNumbers.proformaSprzedazowa + 1)
+          .toString()
+          .padStart(3, "0"),
+        proformaZakupowa: (latestNumbers.proformaZakupowa + 1)
+          .toString()
+          .padStart(3, "0"),
+      };
+
+      const currentInvoiceNumbers = {
+        korygujaca: `K-${year}${month}-${nextNumbers.korygujaca}`,
+        sprzedazowa: `FV${year}${month}-${nextNumbers.sprzedazowa}`,
+        zakupowa: `FZ${year}${month}-${nextNumbers.zakupowa}`,
+        zaliczkowa: `FZ${year}${month}-Z${nextNumbers.zaliczkowa}`,
+        proformaSprzedazowa: `FPS${year}${month}-${nextNumbers.proformaSprzedazowa}, proformaZakupowa: FPZ${year}${month}-${nextNumbers.proformaZakupowa}`,
+      };
+
+      res.json(currentInvoiceNumbers);
+    } catch (error) {
+      res.status(400).send(error.message);
+    }
+  },
+
   create: async (req, res) => {
+    console.log("reqreq", req.body);
     try {
       const {
         companyData,
@@ -49,6 +142,7 @@ const fakturaController = {
         notes,
         userEmail,
         invoiceNumber,
+        invoiceType,
       } = req.body;
 
       const faktura = new Faktura({
@@ -84,6 +178,7 @@ const fakturaController = {
         },
         invoiceSaleDate,
         invoiceDate,
+        invoiceType: xss.inHTMLData(sanitize(invoiceType)),
         invoicePaymentDate,
         items: items.map((item) => ({
           name: xss.inHTMLData(sanitize(item.name)),

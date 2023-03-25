@@ -8,7 +8,7 @@ exports.createProduct = async (req, res) => {
   console.log("createProduct_req", req.body);
   try {
     const product = new Product(req.body);
-    product.allowedUsers = [req.body.userEmail]; // dodaj adres e-mail użytkownika
+    product.allowedUsers = [req.body.userEmail];
     await product.save();
     res.status(201).json(product);
   } catch (error) {

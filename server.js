@@ -6,6 +6,8 @@ require("dotenv").config();
 const bodyParser = require("body-parser");
 const app = express();
 const router = express.Router();
+const swaggerUi = require("swagger-ui-express");
+const swaggerJSDoc = require("swagger-jsdoc");
 const authRoutes = require("./routes/authRoutes");
 const PORT = process.env.PORT || process.env.API_PORT;
 
@@ -18,6 +20,23 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 // register the routes
+const swaggerOptions = {
+  definition: {
+    openapi: "3.0.0",
+    info: {
+      title: "InvoiceApp",
+      version: "1.0.0",
+    },
+  },
+  apis: ["./routes/authRoutes.js"], // Ścieżka do twojego pliku z routerami
+};
+
+const swaggerDocs = swaggerJSDoc(swaggerOptions);
+
+// Endpoint dla Swagger UI
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
+
+// Podłączenie routerów
 app.use("/api/auth", authRoutes);
 
 const server = http.createServer(app);

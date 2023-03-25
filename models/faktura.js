@@ -83,6 +83,10 @@ const invoiceSchema = new Schema({
     required: true,
     unique: true,
   },
+  invoiceType: {
+    type: String,
+    required: true,
+  },
   selectedKontrahent: {
     type: companySchema,
     required: true,
@@ -111,6 +115,7 @@ const invoiceSchema = new Schema({
     type: Number,
     required: true,
   },
+
   userEmail: {
     type: String,
     required: true,
