@@ -172,9 +172,30 @@ const statsController = {
         processInvoices(invoices);
       });
 
+      const years = Object.keys(yearlySales).filter(
+        (key) => Number.isInteger(Number(key)) && Number(key) > 0
+      );
+
+      const total = Object.keys(yearlySales).filter(
+        (key) => !years.includes(key)
+      );
+
+      const chartData = years.map((year) => {
+        const chart = {};
+        total.forEach((category) => {
+          chart[category] = yearlySales[category][year] ?? 0;
+        });
+        return {
+          [year]: Object.assign({}, chart),
+        };
+      });
+
       res.send({
         monthlySales: monthlySales,
         yearlySales: yearlySales,
+        chartData: chartData,
+        years,
+        total,
       });
     } catch (error) {
       res.status(400).send(error.message);
