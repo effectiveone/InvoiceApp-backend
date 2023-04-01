@@ -3,7 +3,7 @@ const router = express.Router();
 const danefirmyControllers = require("../controllers/daneFirmy/daneFirmyController");
 const fakturaControllers = require("../controllers/faktura/fakturaController");
 const statsaControllers = require("../controllers/stats/statsController");
-
+const jpkControllers = require("../controllers/jpk/jpkController");
 const kontrahenciControllers = require("../controllers/kontrahenci/kontrahenciController");
 const productsControllers = require("../controllers/products/productsController");
 const authControllers = require("../controllers/auth/authControllers");
@@ -80,6 +80,9 @@ router.post("/stats", statsaControllers.invoiceStats);
  *         $ref: '#/components/responses/UnauthorizedError'
  */
 router.get("/products", auth, productsControllers.getProducts);
+
+router.post("/jpk", jpkControllers.invoiceStatsForJPK);
+router.post("/send-jpk", jpkControllers.createJPK);
 
 //Products
 router.post("/product", productsControllers.createProduct);
