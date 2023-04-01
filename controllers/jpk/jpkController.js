@@ -53,7 +53,7 @@ const jpkController = {
       const jpkXml = generateJpkXml(jpkCreator.selectedYear);
       const emailSent = await sendEmailWithJpkXml(jpkXml, userEmail);
       if (emailSent) {
-        res.status(200).send("E-mail sent successfully");
+        res.status(200).send("E-mail sent successfully to client");
       } else {
         res.status(500).send("Error sending e-mail");
       }
