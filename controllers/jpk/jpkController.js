@@ -14,7 +14,6 @@ const jpkController = {
   invoiceStatsForJPK: async (req, res) => {
     try {
       const userEmail = xss.inHTMLData(sanitize(req.body.userEmail));
-
       const allInvoices = await Faktura.find({
         userEmail: userEmail,
       }).exec();
@@ -33,10 +32,9 @@ const jpkController = {
   createJPK: async (req, res) => {
     const selectedYear = req.body.selectedYear;
     const selectedMonth = req.body.selectedMonth;
-
+    const userEmail = xss.inHTMLData(sanitize(req.body.userEmail));
+    console.table([{ userEmail, selectedYear, selectedMonth }]);
     try {
-      const userEmail = xss.inHTMLData(sanitize(req.body.userEmail));
-
       const allInvoices = await Faktura.find({
         userEmail: userEmail,
       }).exec();

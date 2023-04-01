@@ -1,4 +1,9 @@
-function extractYearAndMonth(invoices, prefixes, selectedYear, selectedMonth) {
+function extractYearAndMonth(
+  invoices,
+  prefixes,
+  selectedYear = null,
+  selectedMonth = null
+) {
   const regex = new RegExp(`(${prefixes.join("|")})(\\d{2})(\\d{2})`, "g");
   const results = invoices.reduce((acc, invoice) => {
     const { invoiceNumber } = invoice;
@@ -40,10 +45,17 @@ function extractYearAndMonth(invoices, prefixes, selectedYear, selectedMonth) {
     return acc;
   }, {});
 
-  return {
-    allInvoices: results,
-    selectedYear: results[selectedYear][selectedMonth],
-  };
+  if (selectedYear !== null && selectedMonth !== null) {
+    return {
+      allInvoices: results,
+      selectedYear: results[selectedYear][selectedMonth],
+    };
+  } else {
+    return {
+      allInvoices: results,
+      selectedYear: null,
+    };
+  }
 }
 
 module.exports = { extractYearAndMonth };
